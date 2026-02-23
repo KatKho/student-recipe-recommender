@@ -230,12 +230,42 @@ body::before {
     transform: translateY(0);
 }
 
+.search-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+
+.reset-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-secondary);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.reset-btn:hover {
+    color: var(--text-primary);
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.1);
+}
+
 /* Ingredient Box */
 .ingredient-box {
     margin-bottom: 16px;
 }
 
 .ingredient-input-wrapper {
+    margin-bottom: 0;
+}
+
+.ingredient-box.has-chips .ingredient-input-wrapper {
     margin-bottom: 12px;
 }
 
@@ -266,6 +296,10 @@ body::before {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    min-height: 0;
+}
+
+.ingredient-box.has-chips .ingredient-chips {
     min-height: 32px;
 }
 

@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const ingredientInput = document.getElementById("ingredientInput");
     const ingredientChips = document.getElementById("ingredientChips");
     const searchBtn = document.getElementById("searchBtn");
+    const resetBtn = document.getElementById("resetBtn");
     const statusBar = document.getElementById("statusBar");
     const statusText = document.getElementById("statusText");
     const resultsSection = document.getElementById("resultsSection");
@@ -73,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="chip-remove" data-ing="${escapeHtml(ing)}" title="Remove">&times;</button>
             </span>`
         ).join("");
+        ingredientBox.classList.toggle("has-chips", ingredients.length > 0);
 
         ingredientChips.querySelectorAll(".chip-remove").forEach(btn => {
             btn.addEventListener("click", () => removeIngredient(btn.dataset.ing));
@@ -84,11 +86,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    renderChips();
+
     // ---- Search ----
     searchBtn.addEventListener("click", performSearch);
+    resetBtn.addEventListener("click", resetSearch);
     queryInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") performSearch();
     });
+
+    function resetSearch() {
+        queryInput.value = "";
+        ingredientInput.value = "";
+        ingredients = [];
+        renderChips();
+
+        statusBar.classList.add("hidden");
+        resultsHeader.classList.add("hidden");
+        resultsGrid.innerHTML = "";
+        emptyState.classList.remove("hidden");
+
+        updateModeUI();
+    }
 
     async function performSearch() {
         const query = queryInput.value.trim();
