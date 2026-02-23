@@ -1,0 +1,143 @@
+import pickle
+import numpy as np
+from rank_bm25 import BM25Okapi
+from nltk.stem import WordNetLemmatizer
+
+# Initialize lemmatizer once (same as used during indexing)
+_lemmatizer = WordNetLemmatizer()
+
+############################################
+# 1. Load Cleaned Dataset
+############################################
+
+def load_data(path="data/clean_recipes.pkl"):
+    with open(path, "rb") as f:
+        df = pickle.load(f)
+    return df
+
+
+def build_index(df):
+    tokenized_corpus = [doc.split() for doc in df["clean_text"]]
+    bm25 = BM25Okapi(tokenized_corpus)
+    return bm25
+
+
+############################################
+# 2. Ingredient Overlap Scoring
+############################################
+
+# Minimum number of recipe ingredients for scoring denominator.
+# Prevents 1-2 ingredient recipes from dominating results.
+MIN_RECIPE_INGREDIENTS = 4
+
+
+def ingredient_overlap_score(user_ingredients, parsed_ingredients):
+    """
+    Score how well a recipe matches the user's available ingredients.
+
+    Uses FULL INGREDIENT LINE matching: checks if each user ingredient
+    (e.g. "avocado") appears as a substring in any full ingredient line
+    (e.g. "1 ripe avocado, peeled"). This is far more precise than
+    matching against individual tokenized words.
+
+    Args:
+        user_ingredients: List of user search terms, lowercased
+        parsed_ingredients: List of full ingredient strings from recipe,
+                           lowercased (e.g. ["1 ripe avocado", "2 cups flour"])
+    """
+    if not parsed_ingredients:
+        return 0.0
+
+    # Count how many user ingredients appear in at least one ingredient line
+    matched = 0
+    for user_ing in user_ingredients:
+        for line in parsed_ingredients:
+            if user_ing in line:
+                matched += 1
+                break  # This user ingredient is found, move to next
+
+    # Use a floor on the denominator to penalize tiny recipes
+    effective_size = max(len(parsed_ingredients), MIN_RECIPE_INGREDIENTS)
+
+    return matched / effective_size
+
+
+############################################
+# 3. Hybrid Ranking
+############################################
+
+def search(df, bm25, query=None, ingredients=None, alpha=0.7, beta=0.3, top_k=10):
+    """
+    Hybrid search combining BM25 keyword relevance with ingredient overlap.
+    
+    Args:
+        df: DataFrame of cleaned recipes
+        bm25: Pre-built BM25 index
+        query: Keyword search string (e.g. "fried rice")
+        ingredients: List of ingredient strings (e.g. ["eggs", "rice"])
+        alpha: Weight for BM25 score (default 0.7)
+        beta: Weight for ingredient overlap (default 0.3)
+        top_k: Number of results to return
+    
+    Returns:
+        List of result dicts with title, ingredients, instructions, score, etc.
+    """
+    scores = np.zeros(len(df))
+
+    # Keyword BM25 score (normalized)
+    if query:
+        query_tokens = query.lower().split()
+        # Lemmatize query tokens to match lemmatized index
+        query_tokens = [_lemmatizer.lemmatize(t, pos='n') for t in query_tokens]
+        bm25_scores = np.array(bm25.get_scores(query_tokens))
+        max_bm25 = bm25_scores.max() if bm25_scores.max() > 0 else 1.0
+        bm25_scores = bm25_scores / max_bm25  # Normalize to [0, 1]
+        scores += alpha * bm25_scores
+
+    # Ingredient overlap score (matches against full ingredient lines)
+    if ingredients:
+        user_ingredients = [ing.lower().strip() for ing in ingredients]
+        ingredient_scores = []
+        for recipe_ings in df["parsed_ingredients"]:
+            score = ingredient_overlap_score(user_ingredients, recipe_ings)
+            ingredient_scores.append(score)
+        scores += beta * np.array(ingredient_scores)
+
+    top_indices = np.argsort(scores)[::-1][:top_k]
+
+    results = []
+    for idx in top_indices:
+        row = df.iloc[idx]
+        results.append({
+            "title": row["title"],
+            "ingredients": row["ingredients"],
+            "instructions": row["instructions"],
+            "score": round(float(scores[idx]), 4),
+            "source": row.get("source", ""),
+        })
+
+    return results
+
+
+############################################
+# 4. Example Usage
+############################################
+
+if __name__ == "__main__":
+    df = load_data()
+    bm25 = build_index(df)
+
+    print("\n=== Keyword Search: 'fried rice' ===\n")
+    results = search(df, bm25, query="fried rice")
+    for r in results[:5]:
+        print(f"  [{r['score']:.4f}] {r['title']}")
+
+    print("\n=== Ingredient Search: eggs, rice, soy sauce ===\n")
+    results = search(df, bm25, ingredients=["eggs", "rice", "soy sauce"])
+    for r in results[:5]:
+        print(f"  [{r['score']:.4f}] {r['title']}")
+
+    print("\n=== Hybrid Search: 'stir fry' + [chicken, garlic, onion] ===\n")
+    results = search(df, bm25, query="stir fry", ingredients=["chicken", "garlic", "onion"])
+    for r in results[:5]:
+        print(f"  [{r['score']:.4f}] {r['title']}")

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentChef — Smart Recipe Search</title>
+    <meta name="description"
+        content="Find recipes by keyword or available ingredients. A student-focused recipe search engine powered by BM25 and ingredient matching.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <span class="logo-icon">🍳</span>
+                <span class="logo-text">StudentChef</span>
+            </div>
+            <p class="tagline">Find recipes with what you have</p>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <main class="main">
+        <section class="search-section">
+            <!-- Mode Toggle -->
+            <div class="mode-toggle" id="modeToggle">
+                <button class="mode-btn active" data-mode="keyword" id="btnKeyword">
+                    <span class="mode-icon">🔍</span>
+                    Keyword Search
+                </button>
+                <button class="mode-btn" data-mode="ingredient" id="btnIngredient">
+                    <span class="mode-icon">🥕</span>
+                    Ingredient Search
+                </button>
+            </div>
+
+            <!-- Keyword Input -->
+            <div class="search-box" id="keywordBox">
+                <input type="text" id="queryInput"
+                    placeholder="Search recipes... e.g. fried rice, pasta, quick breakfast" autocomplete="off">
+                <button class="search-btn" id="searchBtn">Search</button>
+            </div>
+
+            <!-- Ingredient Input -->
+            <div class="ingredient-box hidden" id="ingredientBox">
+                <div class="ingredient-input-wrapper">
+                    <input type="text" id="ingredientInput"
+                        placeholder="Add an ingredient and press Enter... e.g. eggs, rice, chicken" autocomplete="off">
+                </div>
+                <div class="ingredient-chips" id="ingredientChips"></div>
+            </div>
+        </section>
+
+        <!-- Status Bar -->
+        <div class="status-bar hidden" id="statusBar">
+            <span class="status-text" id="statusText">Searching 63,000+ recipes...</span>
+            <div class="loader"></div>
+        </div>
+
+        <!-- Results -->
+        <section class="results-section" id="resultsSection">
+            <div class="results-header hidden" id="resultsHeader">
+                <h2 id="resultsTitle">Results</h2>
+                <span class="results-count" id="resultsCount"></span>
+            </div>
+            <div class="results-grid" id="resultsGrid"></div>
+        </section>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-illustration">🍽️</div>
+            <h3>Ready to cook something amazing?</h3>
+            <p>Search by recipe name or enter ingredients you have on hand</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Built for INFO 376 — Student Recipe Search & Recommendation System</p>
+        <p class="footer-sub">Powered by BM25 Information Retrieval + Ingredient Overlap Scoring</p>
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

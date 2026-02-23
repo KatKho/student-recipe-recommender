@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Data (too large for GitHub)
+data/
+RecipeNLG dataset/
+recipe-dataset-main/
+
+# Test artifacts
+test_results.txt
+results_readable.md
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
