@@ -112,8 +112,12 @@ GET /api/search?ingredients=chicken,garlic,soy+sauce&top_k=5
 
 ## Datasets
 
-- [RecipeNLG](https://recipenlg.cs.put.poznan.pl/) — ~2M recipes (sampled to 50k)
-- [GitHub 13k Recipes](https://github.com/josephrmartinez/recipe-dataset) — 13k recipes
+Download the following datasets and place them in the project root before running `clean and merge.py`:
+
+1. **13k Recipes** — [GitHub: josephrmartinez/recipe-dataset](https://github.com/josephrmartinez/recipe-dataset)
+   - Place as `recipe-dataset-main/13k-recipes.csv`
+2. **RecipeNLG** (~2M recipes, sampled to 50k) — [Kaggle: RecipeNLG Dataset](https://www.kaggle.com/code/paultimothymooney/explore-recipe-nlg-dataset)
+   - Place as `RecipeNLG dataset/RecipeNLG_dataset.csv`
 
 ## License
 
