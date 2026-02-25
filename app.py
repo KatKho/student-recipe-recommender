@@ -1,8 +1,14 @@
 from flask import Flask, render_template, request, jsonify
+from werkzeug.exceptions import BadRequest
 from recipe_search import load_data, build_index, search
 import ast
 
 app = Flask(__name__)
+
+MIN_TOP_K = 1
+MAX_TOP_K = 20
+MIN_WEIGHT = 0.0
+MAX_WEIGHT = 1.0
 
 # Load data and build BM25 index once at startup
 print("Loading recipe dataset...")
@@ -17,13 +23,65 @@ def index():
     return render_template("index.html")
 
 
+def _parse_float_arg(name, default, min_value=None, max_value=None):
+    raw = request.args.get(name, "")
+    if raw is None or raw.strip() == "":
+        value = default
+    else:
+        try:
+            value = float(raw)
+        except ValueError as exc:
+            raise BadRequest(
+                f"Invalid '{name}' value '{raw}'. Expected a numeric value."
+            ) from exc
+
+    if min_value is not None:
+        value = max(value, min_value)
+    if max_value is not None:
+        value = min(value, max_value)
+    return value
+
+
+def _parse_int_arg(name, default, min_value=None, max_value=None):
+    raw = request.args.get(name, "")
+    if raw is None or raw.strip() == "":
+        value = default
+    else:
+        try:
+            value = int(raw)
+        except ValueError as exc:
+            raise BadRequest(
+                f"Invalid '{name}' value '{raw}'. Expected an integer."
+            ) from exc
+
+    if min_value is not None:
+        value = max(value, min_value)
+    if max_value is not None:
+        value = min(value, max_value)
+    return value
+
+
+@app.errorhandler(BadRequest)
+def handle_bad_request(err):
+    return jsonify({"error": "bad_request", "message": err.description}), 400
+
+
 @app.route("/api/search")
 def api_search():
     query = request.args.get("q", "").strip()
     ingredients_raw = request.args.get("ingredients", "").strip()
-    alpha = float(request.args.get("alpha", 0.7))
-    beta = float(request.args.get("beta", 0.3))
-    top_k = int(request.args.get("top_k", 10))
+    alpha = _parse_float_arg(
+        "alpha", default=0.7, min_value=MIN_WEIGHT, max_value=MAX_WEIGHT
+    )
+    beta = _parse_float_arg(
+        "beta", default=0.3, min_value=MIN_WEIGHT, max_value=MAX_WEIGHT
+    )
+    top_k = _parse_int_arg(
+        "top_k", default=10, min_value=MIN_TOP_K, max_value=MAX_TOP_K
+    )
+
+    if alpha == 0 and beta == 0:
+        raise BadRequest("At least one of 'alpha' or 'beta' must be greater than 0.")
 
     # Parse ingredients (comma-separated)
     ingredients = None
