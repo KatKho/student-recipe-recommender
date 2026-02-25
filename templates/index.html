@@ -8,25 +8,40 @@
     <meta name="description"
         content="Find recipes by keyword or available ingredients. A student-focused recipe search engine powered by BM25 and ingredient matching.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alegreya:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
+    <div class="page-doodles" aria-hidden="true">
+        <span class="page-doodle one">🌿</span>
+        <span class="page-doodle two">🍲</span>
+        <span class="page-doodle three">🌶️</span>
+        <span class="page-doodle four">🥄</span>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <div class="header-inner">
+            <p class="hero-kicker">INFO 376 Project</p>
             <div class="logo">
                 <span class="logo-icon">🍳</span>
                 <span class="logo-text">StudentChef</span>
             </div>
-            <p class="tagline">Find recipes with what you have</p>
+            <p class="tagline">Find delicious recipes with the ingredients already in your kitchen.</p>
         </div>
     </header>
 
     <!-- Search Section -->
     <main class="main">
+        <div class="canvas-doodles" aria-hidden="true">
+            <span class="canvas-doodle knife">🔪</span>
+            <span class="canvas-doodle leaf">🌿</span>
+        </div>
+
         <section class="search-section">
             <!-- Mode Toggle -->
             <div class="mode-toggle" id="modeToggle">
@@ -80,7 +95,7 @@
         <div class="empty-state" id="emptyState">
             <div class="empty-illustration">🍽️</div>
             <h3>Ready to cook something amazing?</h3>
-            <p>Search by recipe name or enter ingredients you have on hand</p>
+            <p>Search by recipe name or enter ingredients you have on hand.</p>
         </div>
     </main>
 
