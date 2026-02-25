@@ -1,10 +1,73 @@
 import pickle
+import re
 import numpy as np
 from rank_bm25 import BM25Okapi
 from nltk.stem import WordNetLemmatizer
 
 # Initialize lemmatizer once (same as used during indexing)
 _lemmatizer = WordNetLemmatizer()
+
+
+def _normalize_ingredient_term(text):
+    if not isinstance(text, str):
+        return ""
+    text = text.lower().strip()
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
+_INGREDIENT_SYNONYM_GROUPS = [
+    {"scallion", "green onion", "spring onion"},
+    {"garbanzo", "garbanzo bean", "garbanzo beans", "chickpea", "chickpeas"},
+    {"coriander", "cilantro"},
+    {"capsicum", "bell pepper", "sweet pepper"},
+    {"aubergine", "aubergines", "eggplant", "eggplants"},
+    {"courgette", "courgettes", "zucchini", "zucchinis"},
+    {"rocket", "arugula"},
+    {"powdered sugar", "icing sugar", "confectioners sugar", "confectioners' sugar"},
+    {"maize", "corn"},
+    {"cornstarch", "corn starch", "cornflour"},
+    {"all purpose flour", "plain flour", "ap flour"},
+    {"caster sugar", "superfine sugar"},
+    {"white sugar", "granulated sugar"},
+    {"bicarbonate of soda", "baking soda"},
+    {"chili", "chilli", "chile"},
+    {"chili flakes", "chilli flakes", "red pepper flakes", "crushed red pepper"},
+    {"prawns", "shrimp"},
+    {"beetroot", "beet", "beets"},
+    {"swede", "rutabaga"},
+    {"yoghurt", "yogurt"},
+    {"minced beef", "ground beef"},
+    {"minced pork", "ground pork"},
+    {"minced turkey", "ground turkey"},
+    {"minced chicken", "ground chicken"},
+    {"tinned tomato", "tinned tomatoes", "canned tomato", "canned tomatoes"},
+    {"tomato ketchup", "ketchup"},
+]
+
+
+def _build_ingredient_alias_lookup(groups):
+    lookup = {}
+    for group in groups:
+        normalized_group = set()
+        for term in group:
+            normalized_term = _normalize_ingredient_term(term)
+            if normalized_term:
+                normalized_group.add(normalized_term)
+        for term in normalized_group:
+            lookup[term] = normalized_group
+    return lookup
+
+
+_INGREDIENT_ALIAS_LOOKUP = _build_ingredient_alias_lookup(_INGREDIENT_SYNONYM_GROUPS)
+
+
+def _expand_ingredient_aliases(term):
+    normalized = _normalize_ingredient_term(term)
+    if not normalized:
+        return set()
+    return _INGREDIENT_ALIAS_LOOKUP.get(normalized, {normalized})
 
 ############################################
 # 1. Load Cleaned Dataset
@@ -48,11 +111,16 @@ def ingredient_overlap_score(user_ingredients, parsed_ingredients):
     if not parsed_ingredients:
         return 0.0
 
+    normalized_lines = [_normalize_ingredient_term(line) for line in parsed_ingredients]
+
     # Count how many user ingredients appear in at least one ingredient line
     matched = 0
     for user_ing in user_ingredients:
-        for line in parsed_ingredients:
-            if user_ing in line:
+        aliases = _expand_ingredient_aliases(user_ing)
+        if not aliases:
+            continue
+        for line in normalized_lines:
+            if any(alias in line for alias in aliases):
                 matched += 1
                 break  # This user ingredient is found, move to next
 
@@ -96,7 +164,13 @@ def search(df, bm25, query=None, ingredients=None, alpha=0.7, beta=0.3, top_k=10
 
     # Ingredient overlap score (matches against full ingredient lines)
     if ingredients:
-        user_ingredients = [ing.lower().strip() for ing in ingredients]
+        seen = set()
+        user_ingredients = []
+        for ing in ingredients:
+            normalized = _normalize_ingredient_term(ing)
+            if normalized and normalized not in seen:
+                seen.add(normalized)
+                user_ingredients.append(normalized)
         ingredient_scores = []
         for recipe_ings in df["parsed_ingredients"]:
             score = ingredient_overlap_score(user_ingredients, recipe_ings)
