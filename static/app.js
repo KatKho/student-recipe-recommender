@@ -145,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!results || results.length === 0) {
             resultsGrid.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-illustration">😕</div>
                     <h3>No recipes found</h3>
                     <p>Try different keywords or ingredients</p>
                 </div>`;

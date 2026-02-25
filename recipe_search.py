@@ -92,6 +92,7 @@ def build_index(df):
 # Minimum number of recipe ingredients for scoring denominator.
 # Prevents 1-2 ingredient recipes from dominating results.
 MIN_RECIPE_INGREDIENTS = 4
+MIN_RESULT_SCORE = 1e-9
 
 
 def ingredient_overlap_score(user_ingredients, parsed_ingredients):
@@ -150,6 +151,9 @@ def search(df, bm25, query=None, ingredients=None, alpha=0.7, beta=0.3, top_k=10
     Returns:
         List of result dicts with title, ingredients, instructions, score, etc.
     """
+    if not query and not ingredients:
+        return []
+
     scores = np.zeros(len(df))
 
     # Keyword BM25 score (normalized)
@@ -177,7 +181,8 @@ def search(df, bm25, query=None, ingredients=None, alpha=0.7, beta=0.3, top_k=10
             ingredient_scores.append(score)
         scores += beta * np.array(ingredient_scores)
 
-    top_indices = np.argsort(scores)[::-1][:top_k]
+    ranked_indices = np.argsort(scores)[::-1]
+    top_indices = [idx for idx in ranked_indices if scores[idx] > MIN_RESULT_SCORE][:top_k]
 
     results = []
     for idx in top_indices:
