@@ -79,7 +79,13 @@
 
         <div class="status-bar hidden" id="statusBar">
             <span class="status-text" id="statusText">Searching 63,000+ recipes...</span>
-            <div class="loader"></div>
+            <div class="cook-loader" aria-hidden="true">
+                <img src="/static/decor/pot.png" alt="" class="cook-pot">
+                <img src="/static/decor/salt.png" alt="" class="cook-salt">
+                <span class="salt-grain grain-1"></span>
+                <span class="salt-grain grain-2"></span>
+                <span class="salt-grain grain-3"></span>
+            </div>
         </div>
 
         <section class="results-section panel panel-results" id="resultsSection">

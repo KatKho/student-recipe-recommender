@@ -465,26 +465,81 @@ body {
 
 /* Status */
 .status-bar {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    padding: 10px;
+    gap: 12px;
+    padding: 10px 12px;
     margin-bottom: 12px;
+    border: 1px dashed rgba(182, 67, 53, 0.22);
+    border-radius: 12px;
+    background: rgba(255, 248, 239, 0.78);
 }
 
 .status-text {
     color: var(--ink-soft);
     font-size: 14px;
+    font-weight: 700;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    line-height: 1.25;
 }
 
-.loader {
-    width: 18px;
-    height: 18px;
+.cook-loader {
+    position: relative;
+    width: 70px;
+    height: 56px;
+    flex-shrink: 0;
+}
+
+.cook-pot {
+    position: absolute;
+    left: 5px;
+    bottom: 0;
+    width: 46px;
+    height: auto;
+    filter: drop-shadow(0 4px 5px rgba(90, 52, 31, 0.22));
+}
+
+.cook-salt {
+    position: absolute;
+    left: 4px;
+    top: -5px;
+    width: 17px;
+    height: auto;
+    transform-origin: 45% 85%;
+    animation: salt-shake 1s ease-in-out infinite;
+}
+
+.salt-grain {
+    position: absolute;
+    width: 3px;
+    height: 3px;
     border-radius: 50%;
-    border: 2px solid rgba(182, 67, 53, 0.2);
-    border-top-color: var(--accent-red);
-    animation: spin 0.82s linear infinite;
+    background: rgba(255, 250, 238, 0.95);
+    box-shadow: 0 0 0 1px rgba(174, 132, 98, 0.18);
+    opacity: 0;
+}
+
+.grain-1 {
+    top: 14px;
+    left: 32px;
+    animation: salt-fall 1s linear infinite;
+}
+
+.grain-2 {
+    top: 15px;
+    left: 29px;
+    animation: salt-fall 1s linear infinite 0.22s;
+}
+
+.grain-3 {
+    top: 16px;
+    left: 35px;
+    animation: salt-fall 1s linear infinite 0.45s;
 }
 
 /* Results */
@@ -677,7 +732,7 @@ body {
 }
 
 .empty-illustration img {
-    width: clamp(96px, 20vw, 170px);
+    width: clamp(120px, 20vw, 170px);
     max-height: 190px;
     height: auto;
     display: block;
@@ -757,6 +812,50 @@ body {
 @keyframes spin {
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes salt-shake {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    15% {
+        transform: rotate(-18deg);
+    }
+
+    30% {
+        transform: rotate(7deg);
+    }
+
+    45% {
+        transform: rotate(-12deg);
+    }
+
+    60% {
+        transform: rotate(4deg);
+    }
+}
+
+@keyframes salt-fall {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.9);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 0.9;
+        transform: translate(-6px, 22px) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-7px, 26px) scale(0.95);
     }
 }
 
