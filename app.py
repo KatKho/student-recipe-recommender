@@ -70,6 +70,7 @@ def handle_bad_request(err):
 def api_search():
     query = request.args.get("q", "").strip()
     ingredients_raw = request.args.get("ingredients", "").strip()
+    exclude_ingredients_raw = request.args.get("exclude_ingredients", "").strip()
     alpha = _parse_float_arg(
         "alpha", default=0.7, min_value=MIN_WEIGHT, max_value=MAX_WEIGHT
     )
@@ -88,11 +89,19 @@ def api_search():
     if ingredients_raw:
         ingredients = [ing.strip() for ing in ingredients_raw.split(",") if ing.strip()]
 
+    # Parse excluded ingredients (comma-separated)
+    exclude_ingredients = None
+    if exclude_ingredients_raw:
+        exclude_ingredients = [
+            ing.strip() for ing in exclude_ingredients_raw.split(",") if ing.strip()
+        ]
+
     # Run search
     results = search(
         df, bm25,
         query=query if query else None,
         ingredients=ingredients,
+        exclude_ingredients=exclude_ingredients,
         alpha=alpha,
         beta=beta,
         top_k=top_k

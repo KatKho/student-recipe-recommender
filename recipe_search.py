@@ -34,7 +34,7 @@ _INGREDIENT_SYNONYM_GROUPS = [
     {"bicarbonate of soda", "baking soda"},
     {"chili", "chilli", "chile"},
     {"chili flakes", "chilli flakes", "red pepper flakes", "crushed red pepper"},
-    {"prawns", "shrimp"},
+    {"prawn", "prawns", "shrimp", "shrimps"},
     {"beetroot", "beet", "beets"},
     {"swede", "rutabaga"},
     {"yoghurt", "yogurt"},
@@ -131,11 +131,43 @@ def ingredient_overlap_score(user_ingredients, parsed_ingredients):
     return matched / effective_size
 
 
+def _normalize_unique_ingredients(ingredients):
+    seen = set()
+    normalized_terms = []
+    for ing in ingredients or []:
+        normalized = _normalize_ingredient_term(ing)
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            normalized_terms.append(normalized)
+    return normalized_terms
+
+
+def _recipe_contains_any_alias(parsed_ingredients, alias_sets):
+    if not parsed_ingredients:
+        return False
+
+    normalized_lines = [_normalize_ingredient_term(line) for line in parsed_ingredients]
+    for aliases in alias_sets:
+        for line in normalized_lines:
+            if any(alias in line for alias in aliases):
+                return True
+    return False
+
+
 ############################################
 # 3. Hybrid Ranking
 ############################################
 
-def search(df, bm25, query=None, ingredients=None, alpha=0.7, beta=0.3, top_k=10):
+def search(
+    df,
+    bm25,
+    query=None,
+    ingredients=None,
+    exclude_ingredients=None,
+    alpha=0.7,
+    beta=0.3,
+    top_k=10,
+):
     """
     Hybrid search combining BM25 keyword relevance with ingredient overlap.
     
@@ -144,6 +176,7 @@ def search(df, bm25, query=None, ingredients=None, alpha=0.7, beta=0.3, top_k=10
         bm25: Pre-built BM25 index
         query: Keyword search string (e.g. "fried rice")
         ingredients: List of ingredient strings (e.g. ["eggs", "rice"])
+        exclude_ingredients: List of ingredients to avoid
         alpha: Weight for BM25 score (default 0.7)
         beta: Weight for ingredient overlap (default 0.3)
         top_k: Number of results to return
@@ -151,10 +184,14 @@ def search(df, bm25, query=None, ingredients=None, alpha=0.7, beta=0.3, top_k=10
     Returns:
         List of result dicts with title, ingredients, instructions, score, etc.
     """
-    if not query and not ingredients:
+    normalized_user_ingredients = _normalize_unique_ingredients(ingredients)
+    normalized_excluded_ingredients = _normalize_unique_ingredients(exclude_ingredients)
+
+    if not query and not normalized_user_ingredients:
         return []
 
     scores = np.zeros(len(df))
+    allowed_mask = np.ones(len(df), dtype=bool)
 
     # Keyword BM25 score (normalized)
     if query:
@@ -167,22 +204,31 @@ def search(df, bm25, query=None, ingredients=None, alpha=0.7, beta=0.3, top_k=10
         scores += alpha * bm25_scores
 
     # Ingredient overlap score (matches against full ingredient lines)
-    if ingredients:
-        seen = set()
-        user_ingredients = []
-        for ing in ingredients:
-            normalized = _normalize_ingredient_term(ing)
-            if normalized and normalized not in seen:
-                seen.add(normalized)
-                user_ingredients.append(normalized)
+    if normalized_user_ingredients:
         ingredient_scores = []
         for recipe_ings in df["parsed_ingredients"]:
-            score = ingredient_overlap_score(user_ingredients, recipe_ings)
+            score = ingredient_overlap_score(normalized_user_ingredients, recipe_ings)
             ingredient_scores.append(score)
         scores += beta * np.array(ingredient_scores)
 
+    # Filter out recipes containing any excluded ingredients
+    if normalized_excluded_ingredients:
+        excluded_alias_sets = [
+            _expand_ingredient_aliases(term) for term in normalized_excluded_ingredients
+        ]
+        allowed_mask = np.array(
+            [
+                not _recipe_contains_any_alias(recipe_ings, excluded_alias_sets)
+                for recipe_ings in df["parsed_ingredients"]
+            ],
+            dtype=bool,
+        )
+
     ranked_indices = np.argsort(scores)[::-1]
-    top_indices = [idx for idx in ranked_indices if scores[idx] > MIN_RESULT_SCORE][:top_k]
+    top_indices = [
+        idx for idx in ranked_indices
+        if allowed_mask[idx] and scores[idx] > MIN_RESULT_SCORE
+    ][:top_k]
 
     results = []
     for idx in top_indices:

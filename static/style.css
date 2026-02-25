@@ -310,7 +310,8 @@ body {
 }
 
 .search-box input,
-.ingredient-input-wrapper input {
+.ingredient-input-wrapper input,
+.exclude-input-wrapper input {
     width: 100%;
     border-radius: var(--radius-md);
     border: 1.5px solid var(--line-soft);
@@ -324,12 +325,14 @@ body {
 }
 
 .search-box input::placeholder,
-.ingredient-input-wrapper input::placeholder {
+.ingredient-input-wrapper input::placeholder,
+.exclude-input-wrapper input::placeholder {
     color: #9f8171;
 }
 
 .search-box input:focus,
-.ingredient-input-wrapper input:focus {
+.ingredient-input-wrapper input:focus,
+.exclude-input-wrapper input:focus {
     border-color: rgba(182, 67, 53, 0.6);
     box-shadow: 0 0 0 3px rgba(182, 67, 53, 0.13);
 }
@@ -415,6 +418,48 @@ body {
 
 .chip-remove:hover {
     background: rgba(182, 67, 53, 0.82);
+    color: #fff;
+}
+
+.exclude-box {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(191, 155, 128, 0.6);
+}
+
+.exclude-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.exclude-box.has-chips .exclude-input-wrapper {
+    margin-bottom: 10px;
+}
+
+.exclude-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip-exclude {
+    background: #f7ded8;
+    border-color: #e6bcb3;
+    color: #8f3c2d;
+}
+
+.chip-exclude .chip-remove {
+    background: rgba(143, 60, 45, 0.15);
+    color: #8f3c2d;
+}
+
+.chip-exclude .chip-remove:hover {
+    background: rgba(143, 60, 45, 0.9);
     color: #fff;
 }
 

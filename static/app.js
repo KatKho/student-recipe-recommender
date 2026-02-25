@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const queryInput = document.getElementById("queryInput");
     const ingredientInput = document.getElementById("ingredientInput");
     const ingredientChips = document.getElementById("ingredientChips");
+    const excludeBox = document.getElementById("excludeBox");
+    const excludeInput = document.getElementById("excludeInput");
+    const excludeChips = document.getElementById("excludeChips");
     const searchBtn = document.getElementById("searchBtn");
     const resetBtn = document.getElementById("resetBtn");
     const statusBar = document.getElementById("statusBar");
@@ -23,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentMode = "keyword";
     let ingredients = [];
+    let excludedIngredients = [];
 
     // ---- Mode Switching ----
     modeToggle.addEventListener("click", (e) => {
@@ -55,6 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    excludeInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            addExcludedIngredient(excludeInput.value.trim());
+        }
+    });
+
     function addIngredient(name) {
         if (!name || ingredients.includes(name.toLowerCase())) return;
         ingredients.push(name.toLowerCase());
@@ -65,6 +76,18 @@ document.addEventListener("DOMContentLoaded", () => {
     function removeIngredient(name) {
         ingredients = ingredients.filter(i => i !== name);
         renderChips();
+    }
+
+    function addExcludedIngredient(name) {
+        if (!name || excludedIngredients.includes(name.toLowerCase())) return;
+        excludedIngredients.push(name.toLowerCase());
+        excludeInput.value = "";
+        renderExcludeChips();
+    }
+
+    function removeExcludedIngredient(name) {
+        excludedIngredients = excludedIngredients.filter(i => i !== name);
+        renderExcludeChips();
     }
 
     function renderChips() {
@@ -86,7 +109,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function renderExcludeChips() {
+        excludeChips.innerHTML = excludedIngredients.map(ing =>
+            `<span class="chip chip-exclude">
+                ${escapeHtml(ing)}
+                <button class="chip-remove" data-excluded-ing="${escapeHtml(ing)}" title="Remove">&times;</button>
+            </span>`
+        ).join("");
+        excludeBox.classList.toggle("has-chips", excludedIngredients.length > 0);
+
+        excludeChips.querySelectorAll(".chip-remove").forEach(btn => {
+            btn.addEventListener("click", () => removeExcludedIngredient(btn.dataset.excludedIng));
+        });
+
+        if (currentMode === "ingredient" && ingredients.length > 0) {
+            performSearch();
+        }
+    }
+
     renderChips();
+    renderExcludeChips();
 
     // ---- Search ----
     searchBtn.addEventListener("click", performSearch);
@@ -98,8 +140,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetSearch() {
         queryInput.value = "";
         ingredientInput.value = "";
+        excludeInput.value = "";
         ingredients = [];
+        excludedIngredients = [];
         renderChips();
+        renderExcludeChips();
 
         statusBar.classList.add("hidden");
         resultsHeader.classList.add("hidden");
@@ -113,6 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const query = queryInput.value.trim();
         const hasQuery = query.length > 0;
         const hasIngredients = ingredients.length > 0;
+        const hasExcludedIngredients = excludedIngredients.length > 0;
 
         if (!hasQuery && !hasIngredients) return;
 
@@ -126,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams();
         if (hasQuery) params.set("q", query);
         if (hasIngredients) params.set("ingredients", ingredients.join(","));
+        if (hasExcludedIngredients) params.set("exclude_ingredients", excludedIngredients.join(","));
         params.set("top_k", "10");
 
         try {
