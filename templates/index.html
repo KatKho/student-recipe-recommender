@@ -10,43 +10,41 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Alegreya:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Work+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
-    <div class="page-doodles" aria-hidden="true">
-        <span class="page-doodle one">🌿</span>
-        <span class="page-doodle two">🍲</span>
-        <span class="page-doodle three">🌶️</span>
-        <span class="page-doodle four">🥄</span>
-    </div>
+    <div class="paper-noise" aria-hidden="true"></div>
 
-    <!-- Header -->
     <header class="header">
         <div class="header-inner">
-            <p class="hero-kicker">INFO 376 Project</p>
+            <p class="header-badge">INFO 376 Final Project</p>
             <div class="logo">
-                <span class="logo-icon">🍳</span>
+                <span class="logo-icon">
+                    <img src="/static/decor/eggs.png" alt="Egg logo">
+                </span>
                 <span class="logo-text">StudentChef</span>
             </div>
-            <p class="tagline">Find delicious recipes with the ingredients already in your kitchen.</p>
         </div>
     </header>
 
-    <!-- Search Section -->
     <main class="main">
-        <div class="canvas-doodles" aria-hidden="true">
-            <span class="canvas-doodle knife">🔪</span>
-            <span class="canvas-doodle leaf">🌿</span>
-        </div>
+        <div class="corner-accent corner-left" aria-hidden="true"></div>
+        <div class="corner-accent corner-right" aria-hidden="true"></div>
 
-        <section class="search-section">
-            <!-- Mode Toggle -->
+        <section class="search-section panel panel-search">
+            <div class="panel-head">
+                <h2 class="panel-title">Find delicious recipes with the ingredients already in your kitchen.</h2>
+                <div class="search-actions">
+                    <button class="reset-btn" id="resetBtn" type="button">Reset</button>
+                </div>
+            </div>
+
             <div class="mode-toggle" id="modeToggle">
                 <button class="mode-btn active" data-mode="keyword" id="btnKeyword">
-                    <span class="mode-icon">🔍</span>
+                    <span class="mode-icon">🔎</span>
                     Keyword Search
                 </button>
                 <button class="mode-btn" data-mode="ingredient" id="btnIngredient">
@@ -55,14 +53,12 @@
                 </button>
             </div>
 
-            <!-- Keyword Input -->
             <div class="search-box" id="keywordBox">
                 <input type="text" id="queryInput"
                     placeholder="Search recipes... e.g. fried rice, pasta, quick breakfast" autocomplete="off">
                 <button class="search-btn" id="searchBtn">Search</button>
             </div>
 
-            <!-- Ingredient Input -->
             <div class="ingredient-box hidden" id="ingredientBox">
                 <div class="ingredient-input-wrapper">
                     <input type="text" id="ingredientInput"
@@ -70,20 +66,14 @@
                 </div>
                 <div class="ingredient-chips" id="ingredientChips"></div>
             </div>
-
-            <div class="search-actions">
-                <button class="reset-btn" id="resetBtn" type="button">Reset</button>
-            </div>
         </section>
 
-        <!-- Status Bar -->
         <div class="status-bar hidden" id="statusBar">
             <span class="status-text" id="statusText">Searching 63,000+ recipes...</span>
             <div class="loader"></div>
         </div>
 
-        <!-- Results -->
-        <section class="results-section" id="resultsSection">
+        <section class="results-section panel panel-results" id="resultsSection">
             <div class="results-header hidden" id="resultsHeader">
                 <h2 id="resultsTitle">Results</h2>
                 <span class="results-count" id="resultsCount"></span>
@@ -91,15 +81,15 @@
             <div class="results-grid" id="resultsGrid"></div>
         </section>
 
-        <!-- Empty State -->
         <div class="empty-state" id="emptyState">
-            <div class="empty-illustration">🍽️</div>
-            <h3>Ready to cook something amazing?</h3>
-            <p>Search by recipe name or enter ingredients you have on hand.</p>
+            <div class="empty-illustration">
+                <img src="/static/decor/pot.png" alt="Cooking pot illustration">
+            </div>
+            <h3>Ready to cook something great?</h3>
+            <p>Search by dish name or list what is in your fridge and pantry.</p>
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
         <p>Built for INFO 376 — Student Recipe Search & Recommendation System</p>
         <p class="footer-sub">Powered by BM25 Information Retrieval + Ingredient Overlap Scoring</p>
