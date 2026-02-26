@@ -33,7 +33,6 @@
     <main class="main">
         <div class="corner-accent corner-left" aria-hidden="true"></div>
         <div class="corner-accent corner-right" aria-hidden="true"></div>
-
         <section class="search-section panel panel-search">
             <div class="panel-head">
                 <h2 class="panel-title">Find delicious recipes with the ingredients already in your kitchen.</h2>
@@ -67,6 +66,11 @@
                 <div class="ingredient-chips" id="ingredientChips"></div>
             </div>
 
+            <div class="popular-box hidden" id="popularBox">
+                <p class="popular-label">Popular ingredients</p>
+                <div class="popular-chips" id="popularIngredients"></div>
+            </div>
+
             <div class="exclude-box" id="excludeBox">
                 <label class="exclude-label" for="excludeInput">Exclude ingredients (optional)</label>
                 <div class="exclude-input-wrapper">
@@ -98,7 +102,7 @@
 
         <div class="empty-state" id="emptyState">
             <div class="empty-illustration">
-                <img src="/static/decor/pot.png" alt="Cooking pot illustration">
+                <img src="/static/decor/pot3.png" alt="Cooking pot illustration">
             </div>
             <h3>Ready to cook something great?</h3>
             <p>Search by dish name or list what is in your fridge and pantry.</p>

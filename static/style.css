@@ -463,6 +463,45 @@ body {
     color: #fff;
 }
 
+.popular-box {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(191, 155, 128, 0.6);
+}
+
+.popular-label {
+    margin-bottom: 7px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.popular-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.quick-chip {
+    border: 1px solid #ddc2ad;
+    border-radius: var(--radius-pill);
+    background: #fff6ec;
+    color: #855f4b;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-chip:hover {
+    background: #ffe7d7;
+    border-color: #cd9d80;
+    color: #a5482f;
+}
+
 /* Status */
 .status-bar {
     display: grid;
@@ -486,6 +525,7 @@ body {
     align-items: center;
     text-align: center;
     line-height: 1.25;
+    transform: translateY(10px);
 }
 
 .cook-loader {
@@ -871,6 +911,12 @@ body {
 }
 
 /* Responsive */
+@media (min-width: 1200px) {
+    .main {
+        padding: 30px 34px 38px;
+    }
+}
+
 @media (max-width: 920px) {
     body {
         padding: 14px;

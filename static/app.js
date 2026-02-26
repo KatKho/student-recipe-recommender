@@ -7,9 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const modeToggle = document.getElementById("modeToggle");
     const keywordBox = document.getElementById("keywordBox");
     const ingredientBox = document.getElementById("ingredientBox");
+    const popularBox = document.getElementById("popularBox");
     const queryInput = document.getElementById("queryInput");
     const ingredientInput = document.getElementById("ingredientInput");
     const ingredientChips = document.getElementById("ingredientChips");
+    const popularIngredients = document.getElementById("popularIngredients");
     const excludeBox = document.getElementById("excludeBox");
     const excludeInput = document.getElementById("excludeInput");
     const excludeChips = document.getElementById("excludeChips");
@@ -27,6 +29,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentMode = "keyword";
     let ingredients = [];
     let excludedIngredients = [];
+    const starterIngredients = [
+        "eggs", "rice", "chicken", "garlic", "onion", "tomato", "pasta",
+        "potato", "beans", "spinach", "cheese", "milk", "butter",
+        "soy sauce", "bell pepper", "mushroom", "bread", "tuna"
+    ];
 
     // ---- Mode Switching ----
     modeToggle.addEventListener("click", (e) => {
@@ -43,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateModeUI() {
         keywordBox.classList.toggle("hidden", currentMode === "ingredient");
         ingredientBox.classList.toggle("hidden", currentMode === "keyword");
+        popularBox.classList.toggle("hidden", currentMode === "keyword");
 
         if (currentMode === "ingredient") {
             ingredientInput.focus();
@@ -127,8 +135,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function renderStarterIngredients() {
+        popularIngredients.innerHTML = starterIngredients.map(ing =>
+            `<button class="quick-chip" data-starter-ing="${escapeHtml(ing)}" type="button">${escapeHtml(ing)}</button>`
+        ).join("");
+
+        popularIngredients.querySelectorAll(".quick-chip").forEach(btn => {
+            btn.addEventListener("click", () => addIngredient(btn.dataset.starterIng));
+        });
+    }
+
     renderChips();
     renderExcludeChips();
+    renderStarterIngredients();
+    updateModeUI();
 
     // ---- Search ----
     searchBtn.addEventListener("click", performSearch);
