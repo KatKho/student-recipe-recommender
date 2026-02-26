@@ -35,35 +35,39 @@
         <div class="corner-accent corner-right" aria-hidden="true"></div>
         <section class="search-section panel panel-search">
             <div class="panel-head">
-                <h2 class="panel-title">Find delicious recipes with the ingredients already in your kitchen.</h2>
+                <h3 class="panel-title">Find delicious recipes with the ingredients already in your kitchen.</h3>
+            </div>
+
+            <div class="search-controls">
+                <div class="mode-toggle" id="modeToggle">
+                    <button class="mode-btn active" data-mode="keyword" id="btnKeyword">
+                        <span class="mode-icon">🔎</span>
+                        Keyword Search
+                    </button>
+                    <button class="mode-btn" data-mode="ingredient" id="btnIngredient">
+                        <span class="mode-icon">🥕</span>
+                        Ingredient Search
+                    </button>
+                </div>
+
+                <div class="search-box" id="keywordBox">
+                    <input type="text" id="queryInput"
+                        placeholder="Search recipes... e.g. fried rice, pasta, quick breakfast" autocomplete="off">
+                    <button class="search-btn" id="searchBtn">Search</button>
+                </div>
+
+                <div class="ingredient-box hidden" id="ingredientBox">
+                    <div class="ingredient-input-wrapper">
+                        <input type="text" id="ingredientInput"
+                            placeholder="Add an ingredient and press Enter... e.g. eggs, rice, chicken"
+                            autocomplete="off">
+                    </div>
+                    <div class="ingredient-chips" id="ingredientChips"></div>
+                </div>
+
                 <div class="search-actions">
                     <button class="reset-btn" id="resetBtn" type="button">Reset</button>
                 </div>
-            </div>
-
-            <div class="mode-toggle" id="modeToggle">
-                <button class="mode-btn active" data-mode="keyword" id="btnKeyword">
-                    <span class="mode-icon">🔎</span>
-                    Keyword Search
-                </button>
-                <button class="mode-btn" data-mode="ingredient" id="btnIngredient">
-                    <span class="mode-icon">🥕</span>
-                    Ingredient Search
-                </button>
-            </div>
-
-            <div class="search-box" id="keywordBox">
-                <input type="text" id="queryInput"
-                    placeholder="Search recipes... e.g. fried rice, pasta, quick breakfast" autocomplete="off">
-                <button class="search-btn" id="searchBtn">Search</button>
-            </div>
-
-            <div class="ingredient-box hidden" id="ingredientBox">
-                <div class="ingredient-input-wrapper">
-                    <input type="text" id="ingredientInput"
-                        placeholder="Add an ingredient and press Enter... e.g. eggs, rice, chicken" autocomplete="off">
-                </div>
-                <div class="ingredient-chips" id="ingredientChips"></div>
             </div>
 
             <div class="popular-box hidden" id="popularBox">

@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentMode = "keyword";
     let ingredients = [];
     let excludedIngredients = [];
+    const SKELETON_CARD_COUNT = 4;
     const starterIngredients = [
         "eggs", "rice", "chicken", "garlic", "onion", "tomato", "pasta",
         "potato", "beans", "spinach", "cheese", "milk", "butter",
@@ -186,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
         emptyState.classList.add("hidden");
         statusBar.classList.remove("hidden");
         resultsHeader.classList.add("hidden");
-        resultsGrid.innerHTML = "";
+        renderLoadingSkeletons();
 
         // Build URL params
         const params = new URLSearchParams();
@@ -197,13 +198,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const res = await fetch(`/api/search?${params.toString()}`);
-            const data = await res.json();
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                const serverMessage = typeof data.message === "string" ? data.message : "";
+                throw new Error(serverMessage || `Search failed (${res.status})`);
+            }
+
+            if (!Array.isArray(data.results)) {
+                throw new Error("Unexpected response from server.");
+            }
 
             statusBar.classList.add("hidden");
             renderResults(data.results, hasIngredients ? ingredients : []);
         } catch (err) {
             statusBar.classList.add("hidden");
-            resultsGrid.innerHTML = `<p style="color: var(--text-secondary); text-align: center;">Error: ${err.message}</p>`;
+            renderErrorState(err.message || "Could not load results. Please try again.");
         }
     }
 
@@ -268,6 +278,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         });
+    }
+
+    function renderLoadingSkeletons() {
+        resultsGrid.innerHTML = Array.from({ length: SKELETON_CARD_COUNT }, (_, i) => `
+            <article class="recipe-card skeleton-card" aria-hidden="true" style="animation-delay: ${i * 0.04}s">
+                <div class="card-header">
+                    <div class="skeleton-block">
+                        <div class="skeleton-line skeleton-title"></div>
+                        <div class="skeleton-line skeleton-meta"></div>
+                    </div>
+                    <div class="skeleton-pill"></div>
+                </div>
+                <div class="card-section">
+                    <div class="skeleton-line skeleton-label"></div>
+                    <div class="skeleton-row">
+                        <div class="skeleton-chip"></div>
+                        <div class="skeleton-chip"></div>
+                        <div class="skeleton-chip"></div>
+                    </div>
+                </div>
+                <div class="card-section">
+                    <div class="skeleton-line skeleton-label"></div>
+                    <div class="skeleton-line skeleton-body"></div>
+                    <div class="skeleton-line skeleton-body short"></div>
+                </div>
+            </article>
+        `).join("");
+    }
+
+    function renderErrorState(message) {
+        resultsHeader.classList.add("hidden");
+        resultsGrid.innerHTML = `
+            <div class="results-error" role="alert">
+                <h3>Could not load recipes</h3>
+                <p>${escapeHtml(message)}</p>
+                <p class="results-error-hint">Try a different search or try again in a moment.</p>
+            </div>
+        `;
     }
 
     function formatIngredients(ings, searchedIngredients) {

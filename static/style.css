@@ -44,9 +44,11 @@ body {
         radial-gradient(circle at 8% 12%, #edf1f7 0%, var(--bg-cool) 40%, var(--bg-cool-2) 100%);
     color: var(--ink-main);
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     line-height: 1.6;
     overflow-x: hidden;
-    padding: 22px;
+    padding: 0;
     position: relative;
 }
 
@@ -67,19 +69,34 @@ body {
 
 /* Header */
 .header {
-    text-align: center;
-    padding: 10px 16px 24px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 0 14px;
+    border-bottom: 1px solid rgba(191, 155, 128, 0.45);
+    background: rgba(247, 241, 232, 0.84);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-shadow: 0 6px 20px rgba(116, 73, 49, 0.12);
     animation: rise-in 0.5s ease-out both;
 }
 
 .header-inner {
-    max-width: 920px;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
+    padding: 0 clamp(14px, 2.2vw, 30px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
 }
 
 .header-badge {
     display: inline-block;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     padding: 5px 12px;
     border-radius: var(--radius-pill);
     border: 1px solid rgba(182, 67, 53, 0.35);
@@ -93,10 +110,10 @@ body {
 
 .logo {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 0;
 }
 
 .logo-icon {
@@ -158,10 +175,12 @@ body {
 /* Main canvas */
 .main {
     position: relative;
-    max-width: 1060px;
+    flex: 1;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
-    padding: 28px 30px 34px;
-    border-radius: var(--radius-xl);
+    padding: clamp(18px, 2vw, 28px) clamp(14px, 2.2vw, 30px) clamp(24px, 2.5vw, 34px);
+    border-radius: 0;
     border: 2px solid var(--line-soft);
     background: var(--paper);
     box-shadow: var(--shadow-lg);
@@ -240,7 +259,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .panel-results {
@@ -249,13 +268,26 @@ body {
 
 .panel-title {
     font-family: 'Fraunces', serif;
-    font-size: clamp(16px, 1.55vw, 22px);
+    font-size: clamp(20px, 1.55vw, 32px);
     color: var(--accent-red);
-    line-height: 1.24;
+    line-height: 1.18;
     max-width: none;
-    white-space: nowrap;
+    white-space: normal;
     flex: 1;
     margin-bottom: 0;
+}
+
+.search-controls {
+    display: grid;
+    grid-template-columns: minmax(320px, 390px) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.search-controls .search-box,
+.search-controls .ingredient-box {
+    min-width: 0;
 }
 
 /* Toggle and input controls */
@@ -263,11 +295,11 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    padding: 8px;
+    padding: 6px;
     border: 1px solid var(--line-soft);
     border-radius: 14px;
     background: rgba(248, 241, 232, 0.82);
-    margin-bottom: 12px;
+    margin-bottom: 0;
 }
 
 .mode-btn {
@@ -276,13 +308,15 @@ body {
     background: transparent;
     color: var(--ink-soft);
     font-family: inherit;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    padding: 10px 14px;
+    min-height: 48px;
+    padding: 0 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
+    white-space: nowrap;
     cursor: pointer;
     transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -301,18 +335,23 @@ body {
 
 .mode-icon {
     font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
 }
 
 .search-box {
     display: flex;
+    align-items: stretch;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
 }
 
 .search-box input,
 .ingredient-input-wrapper input,
 .exclude-input-wrapper input {
     width: 100%;
+    min-height: 48px;
     border-radius: var(--radius-md);
     border: 1.5px solid var(--line-soft);
     background: #fffdf9;
@@ -346,19 +385,24 @@ body {
     font-size: 14px;
     font-weight: 800;
     letter-spacing: 0.2px;
+    min-height: 48px;
     padding: 0 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-btn:hover {
-    transform: translateY(-1px) rotate(-0.4deg);
+    transform: translateY(-1px);
     box-shadow: 0 9px 15px rgba(138, 57, 31, 0.28);
 }
 
 .search-actions {
     display: flex;
     justify-content: flex-end;
+    align-items: stretch;
     flex-shrink: 0;
 }
 
@@ -367,7 +411,8 @@ body {
     border-radius: 10px;
     background: #fff7ed;
     color: var(--ink-soft);
-    padding: 7px 14px;
+    min-height: 48px;
+    padding: 0 15px;
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
@@ -525,7 +570,7 @@ body {
     align-items: center;
     text-align: center;
     line-height: 1.25;
-    transform: translateY(10px);
+    transform: translateY(4px);
 }
 
 .cook-loader {
@@ -619,36 +664,145 @@ body {
     background: linear-gradient(180deg, #fffefb 0%, var(--paper-card) 100%);
     border: 1px solid #e1c9b5;
     border-radius: 16px;
-    padding: 18px;
+    padding: 20px;
     box-shadow: var(--shadow-md);
     transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
     animation: card-in 0.42s ease both;
+    overflow: hidden;
 }
 
 .recipe-card::before {
     content: '';
     position: absolute;
-    top: -1px;
-    right: 24px;
-    width: 32px;
-    height: 11px;
-    border-radius: 0 0 10px 10px;
-    background: linear-gradient(180deg, #d0724e 0%, #b14833 100%);
-    opacity: 0.85;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    border-radius: 0;
+    background: linear-gradient(180deg, rgba(208, 114, 78, 0.9) 0%, rgba(177, 72, 51, 0.95) 100%);
+    opacity: 0.7;
 }
 
 .recipe-card:nth-child(odd) {
-    transform: rotate(-0.18deg);
+    transform: none;
 }
 
 .recipe-card:nth-child(even) {
-    transform: rotate(0.18deg);
+    transform: none;
 }
 
 .recipe-card:hover {
-    transform: translateY(-3px) rotate(0deg);
+    transform: translateY(-4px);
     border-color: rgba(182, 67, 53, 0.35);
-    box-shadow: 0 15px 26px rgba(104, 57, 34, 0.16);
+    box-shadow: 0 18px 30px rgba(104, 57, 34, 0.17);
+}
+
+.skeleton-card {
+    pointer-events: none;
+}
+
+.skeleton-card::before {
+    opacity: 0.45;
+}
+
+.skeleton-block,
+.skeleton-row {
+    display: flex;
+    gap: 8px;
+}
+
+.skeleton-block {
+    flex-direction: column;
+    width: min(100%, 520px);
+}
+
+.skeleton-row {
+    flex-wrap: wrap;
+}
+
+.skeleton-line,
+.skeleton-chip,
+.skeleton-pill {
+    position: relative;
+    overflow: hidden;
+    background: rgba(204, 176, 152, 0.35);
+}
+
+.skeleton-line::after,
+.skeleton-chip::after,
+.skeleton-pill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+    animation: shimmer 1.3s ease-in-out infinite;
+}
+
+.skeleton-title {
+    width: min(88%, 420px);
+    height: 34px;
+}
+
+.skeleton-meta {
+    width: 110px;
+    height: 16px;
+}
+
+.skeleton-label {
+    width: 110px;
+    height: 14px;
+    margin-bottom: 10px;
+}
+
+.skeleton-body {
+    width: min(95%, 700px);
+    height: 16px;
+    margin-bottom: 8px;
+}
+
+.skeleton-body.short {
+    width: min(72%, 520px);
+}
+
+.skeleton-chip {
+    width: 86px;
+    height: 24px;
+    border-radius: var(--radius-pill);
+}
+
+.skeleton-pill {
+    width: 66px;
+    height: 28px;
+    border-radius: var(--radius-pill);
+}
+
+.results-error {
+    margin-top: 8px;
+    border: 1px dashed rgba(182, 67, 53, 0.45);
+    border-radius: 14px;
+    background: rgba(255, 240, 235, 0.88);
+    padding: 20px 16px;
+    text-align: center;
+}
+
+.results-error h3 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(24px, 3vw, 32px);
+    color: #9b2f22;
+    line-height: 1.1;
+    margin-bottom: 6px;
+}
+
+.results-error p {
+    color: #7c4b3a;
+    font-size: 14px;
+}
+
+.results-error-hint {
+    margin-top: 6px;
+    font-size: 13px !important;
+    color: #916455 !important;
 }
 
 .card-header {
@@ -656,12 +810,14 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 9px;
+    border-bottom: 1px dashed rgba(191, 155, 128, 0.55);
 }
 
 .card-title {
     font-family: 'Fraunces', serif;
-    font-size: 27px;
+    font-size: clamp(26px, 2.4vw, 34px);
     line-height: 1.08;
     color: var(--ink-main);
     margin-bottom: 4px;
@@ -690,7 +846,15 @@ body {
 }
 
 .card-section {
-    margin-top: 10px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(220, 200, 180, 0.38);
+}
+
+.card-section:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
 }
 
 .card-section-title {
@@ -794,7 +958,10 @@ body {
 
 /* Footer */
 .footer {
+    width: 100%;
     text-align: center;
+    border-top: 1px solid rgba(191, 155, 128, 0.38);
+    background: rgba(247, 241, 232, 0.82);
     padding: 22px 16px 14px;
 }
 
@@ -846,6 +1013,12 @@ body {
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
     }
 }
 
@@ -917,14 +1090,21 @@ body {
     }
 }
 
-@media (max-width: 920px) {
-    body {
-        padding: 14px;
+@media (max-width: 1080px) {
+    .search-controls {
+        grid-template-columns: 1fr;
     }
 
+    .reset-btn {
+        min-height: 40px;
+        padding: 7px 14px;
+    }
+}
+
+@media (max-width: 920px) {
     .main {
         padding: 20px 16px 24px;
-        border-radius: 22px;
+        border-radius: 0;
     }
 
     .corner-accent {
@@ -942,6 +1122,11 @@ body {
 }
 
 @media (max-width: 680px) {
+    .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .panel-head {
         flex-direction: column;
         align-items: flex-start;
