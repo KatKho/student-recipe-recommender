@@ -128,7 +128,7 @@ def ingredient_overlap_score(user_ingredients, parsed_ingredients):
     # Use a floor on the denominator to penalize tiny recipes
     effective_size = max(len(parsed_ingredients), MIN_RECIPE_INGREDIENTS)
 
-    return matched / effective_size
+    return float(matched) / float(effective_size)
 
 
 def _normalize_unique_ingredients(ingredients):
@@ -225,10 +225,11 @@ def search(
         )
 
     ranked_indices = np.argsort(scores)[::-1]
-    top_indices = [
-        idx for idx in ranked_indices
+    valid_indices = [
+        int(idx) for idx in ranked_indices.tolist()
         if allowed_mask[idx] and scores[idx] > MIN_RESULT_SCORE
-    ][:top_k]
+    ]
+    top_indices = [valid_indices[i] for i in range(min(top_k, len(valid_indices)))]
 
     results = []
     for idx in top_indices:
@@ -254,15 +255,15 @@ if __name__ == "__main__":
 
     print("\n=== Keyword Search: 'fried rice' ===\n")
     results = search(df, bm25, query="fried rice")
-    for r in results[:5]:
+    for r in results[:5]:  # type: ignore
         print(f"  [{r['score']:.4f}] {r['title']}")
 
     print("\n=== Ingredient Search: eggs, rice, soy sauce ===\n")
     results = search(df, bm25, ingredients=["eggs", "rice", "soy sauce"])
-    for r in results[:5]:
+    for r in results[:5]:  # type: ignore
         print(f"  [{r['score']:.4f}] {r['title']}")
 
     print("\n=== Hybrid Search: 'stir fry' + [chicken, garlic, onion] ===\n")
     results = search(df, bm25, query="stir fry", ingredients=["chicken", "garlic", "onion"])
-    for r in results[:5]:
+    for r in results[:5]:  # type: ignore
         print(f"  [{r['score']:.4f}] {r['title']}")

@@ -136,11 +136,11 @@ def main():
 
     print("Loading GitHub dataset...")
     github_df = load_github_dataset("recipe-dataset-main/13k-recipes.csv")
-    print(f"  → {len(github_df)} recipes loaded")
+    print(f"  -> {len(github_df)} recipes loaded")
 
     print("Loading RecipeNLG dataset (sampling 50k)...")
     recipenlg_df = load_recipenlg_dataset("RecipeNLG dataset/RecipeNLG_dataset.csv")
-    print(f"  → {len(recipenlg_df)} recipes loaded")
+    print(f"  -> {len(recipenlg_df)} recipes loaded")
 
     merged_df = pd.concat([github_df, recipenlg_df], ignore_index=True)
     print(f"Merged: {len(merged_df)} recipes total")
@@ -151,7 +151,7 @@ def main():
     with open("data/clean_recipes.pkl", "wb") as f:
         pickle.dump(merged_df, f)
 
-    print(f"✅ Cleaned and merged dataset saved to data/clean_recipes.pkl")
+    print(f"[Done] Cleaned and merged dataset saved to data/clean_recipes.pkl")
     print(f"Total recipes: {len(merged_df)}")
     print(merged_df[["title", "clean_title", "source"]].head(10))
 

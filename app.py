@@ -15,7 +15,7 @@ print("Loading recipe dataset...")
 df = load_data()
 print(f"Building BM25 index over {len(df)} recipes...")
 bm25 = build_index(df)
-print("✅ Ready to serve!")
+print("[Done] Ready to serve!")
 
 
 @app.route("/")
