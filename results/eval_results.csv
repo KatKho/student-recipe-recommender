@@ -1,0 +1,21 @@
+query,mode,precision@10,recall@10,ndcg@10,mrr,latency_ms,hits,total_relevant_est
+fried rice,keyword,1.0,0.099,1.0,1.0,4148.36,10,101
+chocolate cake,keyword,0.9,0.0744,0.9972,1.0,47.92,9,121
+pasta carbonara,keyword,0.6,0.6,0.9797,1.0,44.37,6,10
+chicken soup,keyword,0.1,0.1429,0.3869,0.2,44.62,1,7
+banana bread,keyword,0.9,0.0497,0.9842,1.0,94.22,9,181
+scrambled eggs,keyword,0.5,0.1515,0.8995,1.0,96.75,5,33
+tomato salad,keyword,0.1,0.0208,0.6309,0.5,94.99,1,48
+eggs + rice,ingredient,0.0,0.0,0.0,0.0,3145.37,0,0
+chicken + garlic + lemon,ingredient,0.0,0.0,0.0,0.0,3382.07,0,0
+flour + butter + sugar,ingredient,0.0,0.0,0.0,0.0,4022.54,0,0
+pasta + tomato + basil,ingredient,0.0,0.0,0.0,0.0,3547.34,0,0
+onion + potato + carrot,ingredient,0.0,0.0,0.0,0.0,3779.15,0,0
+milk + egg + vanilla,ingredient,0.0,0.0,0.0,0.0,3322.83,0,0
+stir fry + chicken + garlic,hybrid,0.8,0.051,0.7985,0.5,3501.77,8,157
+breakfast + eggs + cheese,hybrid,1.0,0.0559,1.0,1.0,2888.23,10,179
+soup + lentil + carrot,hybrid,0.3,0.075,0.901,1.0,3168.33,3,40
+curry + rice,hybrid,1.0,0.0565,1.0,1.0,2977.47,10,177
+salad + avocado + lime,hybrid,1.0,0.0532,1.0,1.0,2960.62,10,188
+pasta (no meat),keyword,0.9,0.0471,0.9938,1.0,2806.69,9,191
+cookies (no nuts),keyword,0.4,0.2105,0.8207,1.0,2909.79,4,19

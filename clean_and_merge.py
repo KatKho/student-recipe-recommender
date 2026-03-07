@@ -85,19 +85,27 @@ def load_github_dataset(path):
 ############################################
 
 def load_recipenlg_dataset(path, sample_size=50000):
-    df = pd.read_csv(path)
+    chunks = []
+    collected = 0
+    chunk_size = 100_000  # adjust for memory/speed tradeoff
+    
+    for chunk in pd.read_csv(path, chunksize=chunk_size):
+        remaining = sample_size - collected
+        if remaining <= 0:
+            break
+        
+        # sample from this chunk
+        take = min(remaining, len(chunk))
+        chunks.append(chunk.sample(n=take, random_state=42))
+        collected += take
+
+    df = pd.concat(chunks, ignore_index=True)
 
     df = df.rename(columns={
-        "title": "title",
-        "ingredients": "ingredients",
         "directions": "instructions"
     })
 
     df["source"] = "recipenlg"
-
-    # Sample to keep prototype fast
-    if len(df) > sample_size:
-        df = df.sample(n=sample_size, random_state=42)
 
     return df[["title", "ingredients", "instructions", "source"]]
 
